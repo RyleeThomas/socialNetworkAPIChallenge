@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const User = require('../models/User');
 
 const userController = {
     //get all users
@@ -39,6 +39,23 @@ const userController = {
             .catch(err => res.json(err));
     },
 
+    // add friend to user
+    addfriend({ params, body }, res){
+        User.findOneAndUpdate(
+            {_id: params.userId },
+            { $push: { friends: body }},
+            { new: true }
+            )
+            .then(dbUserData => {
+                if(!dbUserData){
+                    res.status(404).json({ message: 'No User with that ID'});
+                    return;
+                }
+                res.json(dbUserData);
+            })
+            .catch( err => res.json(err));
+    },
+
     //update user by id
     updateUser({ params, body }, res){
         User.findOneAndUpdate({_id: params.id }, body, {new:true})
@@ -57,6 +74,17 @@ const userController = {
         User.findOneAndDelete({ _id: params.id })
             .then(dbUserData => res.json(dbUserData))
             .catch(err => res.json(err));
+    },
+
+    //remove friend
+    removeFriend({ params }, res ){
+        User.findOneAndUpdate(
+            { _id: params.UserId },
+            { $pull: { friends: {friendsId: params.friendsId}} },
+            { new: true }
+        )
+        .then(dbUserData => res.json(dbUserData))
+        .catch(err => res.json(err));
     }
 };
 
