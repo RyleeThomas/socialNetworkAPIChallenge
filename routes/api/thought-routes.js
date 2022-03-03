@@ -23,8 +23,6 @@ router
   .put(updateThought)
   .delete(removeThought);
 
-module.exports = router;
-
 // /api/thoughts/<thoughtId>/<reactions>
 router
     .route('/:thoughtId/reactions')
